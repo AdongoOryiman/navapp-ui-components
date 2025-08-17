@@ -93,7 +93,7 @@
 
         <!-- Social Login Button (Outlook) -->
         <button id="outlook-btn" class="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-3 px-6 rounded-full shadow-sm hover:bg-gray-50 transition-colors mb-6">
-            <!-- New SVG for Outlook icon from user -->
+            <!-- Correct SVG for Outlook icon from user -->
             <svg class="h-6 w-6 mr-3" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -213,13 +213,15 @@
             const email = emailInput.value;
             const password = passwordInput.value;
             if (email && password) {
+                // Here, we send a message to Thunkable with the email and password.
+                // Thunkable blocks will then handle the authentication logic.
+                const message = {
+                    action: "login",
+                    email: email,
+                    password: password
+                };
+                window.Thunkable.postMessage(JSON.stringify(message));
                 showMessage(`Attempting to log in with email: ${email}`);
-                // To send data to Thunkable, you would use:
-                // window.Thunkable.postMessage(JSON.stringify({
-                //     action: 'login',
-                //     email: email,
-                //     password: password
-                // }));
             } else {
                 showMessage("Please enter both email and password.");
             }
@@ -227,21 +229,38 @@
 
         outlookBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            showMessage("Outlook login initiated!");
-            // To communicate with Thunkable, you would use:
-            // window.Thunkable.postMessage("OUTLOOK_LOGIN");
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            if (email && password) {
+                 // Here, we specifically tell Thunkable that this is an Outlook login attempt
+                 // and include the user's email for domain validation.
+                const message = {
+                    action: "outlookLogin",
+                    email: email,
+                    password: password
+                };
+                window.Thunkable.postMessage(JSON.stringify(message));
+                showMessage("Outlook login initiated!");
+            } else {
+                 showMessage("Please enter both email and password for Outlook login.");
+            }
         });
 
+        // This message is for "I'm a guest!"
+        guestLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const message = {
+                action: "guestLogin"
+            };
+            window.Thunkable.postMessage(JSON.stringify(message));
+            showMessage("Guest login initiated!");
+        });
+
+        // Other links remain the same
         forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
             showMessage("Forgot password link clicked!");
             // window.Thunkable.postMessage("FORGOT_PASSWORD");
-        });
-
-        guestLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showMessage("Guest login initiated!");
-            // window.Thunkable.postMessage("GUEST_LOGIN");
         });
 
         signupLink.addEventListener('click', (e) => {
